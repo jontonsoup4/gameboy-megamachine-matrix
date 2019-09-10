@@ -1,0 +1,177 @@
+import { makeStyles } from '@material-ui/core';
+
+const scale = 0.15;
+
+export default makeStyles((theme) => ({
+  container: {
+    cursor: 'pointer',
+  },
+  gameboy: {
+    background: 'rgba(238, 238, 238, 0.6)',
+    borderRadius: `${10 * scale}px ${10 * scale}px ${60 * scale}px ${10 * scale}px`,
+    boxShadow: theme.shadows[2],
+    display: 'block',
+    height: 697 * scale,
+    pointerEvents: 'none',
+    position: 'relative',
+    userSelect: 'none',
+    width: 422 * scale,
+
+    '&:before': {
+      borderBottom: `${4 * scale}px solid rgba(224, 224, 224, 0.6)`,
+      content: '""',
+      height: 31 * scale,
+      position: 'absolute',
+      width: '100%',
+    },
+    '&:after': {
+      borderLeft: `${4 * scale}px solid rgba(224, 224, 224, 0.6)`,
+      borderRight: `${4 * scale}px solid rgba(224, 224, 224, 0.6)`,
+      content: '""',
+      height: 31 * scale,
+      marginLeft: 40 * scale,
+      marginRight: 40 * scale,
+      position: 'absolute',
+      top: 0,
+      width: 334 * scale,
+    },
+  },
+  'screen-cont': {
+    backgroundColor: '#777',
+    borderRadius: `${13 * scale}px ${13 * scale}px ${50 * scale}px ${13 * scale}px`,
+    height: 272 * scale,
+    left: 40 * scale,
+    marginBottom: 58 * scale,
+    position: 'relative',
+    top: 60 * scale,
+    width: 342 * scale,
+  },
+  screen: {
+    background: 'rgba(255, 246, 212, 0.1)',
+    boxShadow: `inset ${3 * scale}px ${3 * scale}px rgba(0,0,0,0.15)`,
+    height: 205 * scale,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    position: 'relative',
+    top: 30 * scale,
+    width: 225 * scale,
+  },
+  lighted: {
+    background: 'rgba(255, 246, 212, 1) !important',
+  },
+  hovered: {
+    background: 'rgba(255, 246, 212, 0.4)',
+  },
+  power: {
+    backgroundColor: '#b98181',
+    borderRadius: '100%',
+    content: '""',
+    height: 10 * scale,
+    left: 20 * scale,
+    position: 'absolute',
+    top: 100 * scale,
+    transition: 'background-color 300ms linear',
+    width: 10 * scale,
+
+    '&:before': {
+      color: '#b3b3b3',
+      content: '""',
+      fontFamily: 'sans-serif',
+      fontSize: 8 * scale,
+      left: -10 * scale,
+      position: 'relative',
+      top: 18 * scale,
+    }
+  },
+  'power-on': {
+    backgroundColor: '#f00',
+    boxShadow: `0 0 ${3 * scale}px ${scale}px #ef5350`,
+  },
+  'controls-cont': {
+    display: 'block',
+    marginTop: 90 * scale,
+    position: 'relative',
+  },
+  'btn-direction': {
+    marginLeft: 40 * scale,
+    position: 'relative',
+    top: 60 * scale,
+
+    '&:before': {
+      backgroundColor: '#353535',
+      borderRadius: '100%',
+      content: '""',
+      height: 30 * scale,
+      left: 30 * scale,
+      position: 'absolute',
+      top: 30 * scale,
+      width: 30 * scale,
+      zIndex: 1,
+    }
+  },
+  vertical: {
+    background: '#444',
+    borderRadius: 5 * scale,
+    height: 90 * scale,
+    left: 30 * scale,
+    position: 'absolute',
+    width: 30 * scale,
+  },
+
+  horizontal: {
+    background: '#444',
+    borderRadius: 5 * scale,
+    height: 90 * scale,
+    left: 30 * scale,
+    position: 'absolute',
+    transform: 'rotate(90deg)',
+    width: 30 * scale,
+  },
+
+  'btn-AB': {
+    background: 'rgba(223, 223, 223, 0.6)',
+    borderRadius: 30 * scale,
+    height: 60 * scale,
+    left: 252 * scale,
+    position: 'absolute',
+    transform: 'rotate(-25deg)',
+    top: 72 * scale,
+    width: 130 * scale,
+
+    '&:after': {
+      background: '#a93671',
+      borderRadius: '100%',
+      boxShadow: `${68 * scale}px 0 #a93671`,
+      content: '""',
+      height: 44 * scale,
+      position: 'absolute',
+      right: 9 * scale,
+      top: 8 * scale,
+      transform: 'rotate(180deg)',
+      width: 44 * scale,
+    },
+  },
+  'btn-start-select': {
+    background: '#999',
+    borderRadius: 10,
+    boxShadow: `${57 * scale}px ${27 * scale}px #999, 0 0 0 ${5 * scale}px rgba(223, 223, 223, 0.6), ${57 * scale}px ${27 * scale}px 0 ${5 * scale}px rgba(223, 223, 223, 0.6)`,
+    height: 12 * scale,
+    left: 140 * scale,
+    position: 'absolute',
+    top: 205 * scale,
+    transform: 'rotate(-25deg)',
+    width: 60 * scale,
+  },
+  speakers: {
+    background: 'rgba(221, 221, 221, 0.6)',
+    borderRadius: 4 * scale,
+    boxShadow: `${20 * scale}px 0 rgba(221, 221, 221, 0.6), ${40 * scale}px 0 rgba(221, 221, 221, 0.6), ${60 * scale}px 0 rgba(221, 221, 221, 0.6), ${80 * scale}px 0 rgba(221, 221, 221, 0.6), ${100 * scale}px 0 rgba(221, 221, 221, 0.6)`,
+    content: '""',
+    height: 70 * scale,
+    left: 300 * scale,
+    position: 'relative',
+    top: 260 * scale,
+    transform: 'rotate(-25deg)',
+    width: 8 * scale,
+  },
+}));
