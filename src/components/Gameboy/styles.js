@@ -56,12 +56,6 @@ export default makeStyles((theme) => ({
     top: 30 * scale,
     width: 225 * scale,
   },
-  lighted: {
-    background: 'rgba(255, 246, 212, 1) !important',
-  },
-  hovered: {
-    background: 'rgba(255, 246, 212, 0.4)',
-  },
   power: {
     backgroundColor: '#b98181',
     borderRadius: '100%',

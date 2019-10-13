@@ -1,9 +1,8 @@
-import classNames from 'classnames';
+import withTheme from '@material-ui/core/styles/withTheme';
 import React from 'react';
 import styles from './styles';
-import * as constants from '../../utils/constants';
 
-export default (props) => {
+export default withTheme((props) => {
   const {
     isHovered,
     onMouseDown,
@@ -12,6 +11,10 @@ export default (props) => {
     velocity,
   } = props;
   const classes = styles();
+  const opacity = velocity ? velocity / 127 : 0;
+  const backgroundColor = isHovered && !velocity
+    ? 'rgba(255, 246, 212, 0.4)'
+    : `rgba(255, 246, 212, ${opacity}`;
 
   return (
     <div
@@ -23,10 +26,7 @@ export default (props) => {
       <div className={classes['gameboy']}>
         <div className={classes['screen-cont']}>
           <div className={classes['power']}/>
-          <div className={classNames(classes['screen'], {
-            [classes['lighted']]: velocity > constants.NOTE_OFF,
-            [classes['hovered']]: isHovered,
-          })}>
+          <div className={classes['screen']} style={{ backgroundColor }}>
           </div>
         </div>
         <div className={classes['controls-cont']}>
@@ -41,4 +41,4 @@ export default (props) => {
       </div>
     </div>
   )
-}
+})

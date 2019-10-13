@@ -30,6 +30,7 @@ export default () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(constants.DEFAULT_BPM);
   const [subdivision, setSubdivision] = useState(constants.NOTE_LENGTHS.EIGHTH.value);
+  const [velocity, setVelocity] = useState(constants.MAX_VELOCITY);
 
   const nextFrame = useCallback((framesLength = null) => {
     setFrame((frame) => frame >= (framesLength || frames.length) - 1 ? 0 : frame + 1);
@@ -105,7 +106,7 @@ export default () => {
     const newMatrix = copyArray(matrix);
     const currentItem = newMatrix[row][column];
     const currentItemOn = currentItem.velocity === constants.NOTE_OFF;
-    newMatrix[row][column].velocity = currentItemOn ? constants.NOTE_ON : constants.NOTE_OFF;
+    newMatrix[row][column].velocity = currentItemOn ? velocity : constants.NOTE_OFF;
     setCurrentFrame(newMatrix)
   };
 
