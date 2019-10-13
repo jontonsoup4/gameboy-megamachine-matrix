@@ -56,6 +56,13 @@ export default makeStyles((theme) => ({
     top: 30 * scale,
     width: 225 * scale,
   },
+  dense: {
+    background: 'rgba(255, 246, 212, 0.1)',
+    border: '1px solid rgba(0, 0, 0, 0.4)',
+    pointerEvents: 'none',
+    height: 25,
+    width: 25,
+  },
   power: {
     backgroundColor: '#b98181',
     borderRadius: '100%',

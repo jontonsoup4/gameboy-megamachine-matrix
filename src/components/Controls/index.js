@@ -46,8 +46,10 @@ export default (props) => {
     isPlaying,
     setBpm,
     setSubdivision,
+    setVelocity,
     subdivision,
     totalFrames,
+    velocity,
   } = props;
   const classes = styles();
   const [open, setOpen] = useState(false);
@@ -80,12 +82,18 @@ export default (props) => {
       </Select>
       <Input
         className={classes['tempo']}
-        id='bpm'
-        label='BPM'
         onChange={(e) => setBpm(e.target.value)}
         startAdornment={<InputAdornment disableTypography position="start">Tempo:</InputAdornment>}
         type='number'
         value={bpm}
+      />
+      <Input
+
+        className={classes['velocity']}
+        onChange={(e) => setVelocity(e.target.value)}
+        startAdornment={<InputAdornment disableTypography position="start">Velocity:</InputAdornment>}
+        type='number'
+        value={velocity}
       />
       <ButtonGroup className={classes['button-group']} color='primary' size='small' variant='contained'>
         {isPlaying ? (

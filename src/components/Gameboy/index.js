@@ -9,6 +9,7 @@ export default withTheme((props) => {
     onMouseOut,
     onMouseOver,
     velocity,
+    useGameboy,
   } = props;
   const classes = styles();
   const opacity = velocity ? velocity / 127 : 0;
@@ -23,22 +24,25 @@ export default withTheme((props) => {
       onMouseOut={onMouseOut}
       onMouseOver={onMouseOver}
     >
-      <div className={classes['gameboy']}>
-        <div className={classes['screen-cont']}>
-          <div className={classes['power']}/>
-          <div className={classes['screen']} style={{ backgroundColor }}>
+      {useGameboy ? (
+        <div className={classes['gameboy']}>
+          <div className={classes['screen-cont']}>
+            <div className={classes['power']}/>
+            <div className={classes['screen']} style={{ backgroundColor }} />
           </div>
-        </div>
-        <div className={classes['controls-cont']}>
-          <div className={classes['btn-direction']}>
-            <div className={classes['vertical']}/>
-            <div className={classes['horizontal']}/>
+          <div className={classes['controls-cont']}>
+            <div className={classes['btn-direction']}>
+              <div className={classes['vertical']}/>
+              <div className={classes['horizontal']}/>
+            </div>
+            <div className={classes['btn-AB']}/>
+            <div className={classes['btn-start-select']}/>
           </div>
-          <div className={classes['btn-AB']}/>
-          <div className={classes['btn-start-select']}/>
+          <div className={classes['speakers']}/>
         </div>
-        <div className={classes['speakers']}/>
-      </div>
+      ) : (
+        <div className={classes['dense']} style={{ backgroundColor }} />
+      )}
     </div>
   )
 })

@@ -14,7 +14,8 @@ export const DEFAULT_BPM = 140;
 export const MIDI_CHANNEL = 16;
 export const NOTE_OFF = 0;
 export const MAX_VELOCITY = 127;
-export const DEFAULT_VELOCITY = 64;
+export const MIN_VELOCITY = 0;
+export const DEFAULT_VELOCITY = MAX_VELOCITY;
 export const NOTE_LENGTHS = {
   WHOLE: {
     text: '1/1',

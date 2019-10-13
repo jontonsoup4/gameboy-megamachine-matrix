@@ -13,7 +13,7 @@ let cc = constants.STARTING_NOTE;
 const initState = copyArray(constants.EMPTY_MATRIX.map((row) => row.map(() => {
   const item = {
     cc,
-    velocity: 0,
+    velocity: constants.MIN_VELOCITY,
   };
   cc += 1;
   return item;
@@ -30,7 +30,7 @@ export default () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(constants.DEFAULT_BPM);
   const [subdivision, setSubdivision] = useState(constants.NOTE_LENGTHS.EIGHTH.value);
-  const [velocity, setVelocity] = useState(constants.MAX_VELOCITY);
+  const [velocity, setVelocity] = useState(constants.DEFAULT_VELOCITY);
 
   const nextFrame = useCallback((framesLength = null) => {
     setFrame((frame) => frame >= (framesLength || frames.length) - 1 ? 0 : frame + 1);
@@ -225,6 +225,10 @@ export default () => {
     }
   }, [frame, frames, matrix, setCurrentFrame]);
 
+  const handleSetVelocity = (value) => {
+    setVelocity(Math.min(Math.max(parseInt(value), constants.MIN_VELOCITY), constants.MAX_VELOCITY));
+  };
+
   const handleKeyDown = useCallback((event) => {
     const { code, key } = event;
     if (key === constants.KEY_SHORTCUTS.TRANSLATE_UP) {
@@ -283,6 +287,8 @@ export default () => {
     window.onkeydown = handleKeyDown;
   }, [handleKeyDown, isPlaying, nextFrame]);
 
+  const USE_GAMEBOY = true;
+
   return (
     <div className={classes['container']}>
       <Ribbon />
@@ -293,11 +299,12 @@ export default () => {
             item xs={12}
             justify='center'
             key={`row (${rowIndex})`}
-            spacing={6}
+            spacing={USE_GAMEBOY ? 6 : 1}
           >
             {row.map((item, columnIndex) => (
               <Grid item key={`column (${rowIndex},${columnIndex})`}>
                 <Gameboy
+                  useGameboy={USE_GAMEBOY}
                   isHovered={activeItem && activeItem[0] === rowIndex && activeItem[1] === columnIndex}
                   onMouseDown={handleOnMouseDown}
                   onMouseOut={handleOnMouseOut}
@@ -328,8 +335,10 @@ export default () => {
         isPlaying={isPlaying}
         setBpm={updateBpm}
         setSubdivision={updateSubdivision}
+        setVelocity={handleSetVelocity}
         subdivision={subdivision}
         totalFrames={frames.length}
+        velocity={velocity}
       />
     </div>
   );

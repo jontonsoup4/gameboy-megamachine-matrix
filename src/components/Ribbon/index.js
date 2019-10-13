@@ -8,17 +8,17 @@ export default () => {
   const link = `https://github.com/${username}`;
   return (
     <div className={classes['container']}>
-        <Button
-          color='primary'
-          component='a'
-          className={classes['name']}
-          href={link}
-          rel="noopener noreferrer"
-          target='_blank'
-          variant='contained'
-        >
-          Built by <span className={classes['link']}>@{username}</span>
-        </Button>
+      <Button
+        color='primary'
+        component='a'
+        className={classes['name']}
+        href={link}
+        rel="noopener noreferrer"
+        target='_blank'
+        variant='contained'
+      >
+        Built by <span className={classes['link']}>@{username}</span>
+      </Button>
     </div>
   )
 }

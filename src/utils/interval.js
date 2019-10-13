@@ -1,13 +1,11 @@
 const HighResolutionTimer = function(options) {
   this.timer = false;
-
   this.total_ticks = 0;
-
   this.start_time = undefined;
   this.current_time = undefined;
 
   this.bpm = 60000 / ((options.bpm) ? options.bpm : 1000);
-  this.callback = (options.callback) ? options.callback : function() {};
+  this.callback = (options.callback) ? options.callback : () => null;
 
   this.run = function() {
     this.current_time = Date.now();

@@ -17,6 +17,11 @@ export default makeStyles((theme) => ({
   tempo: {
     color: theme.palette.common.white,
     marginRight: theme.spacing(1),
-    width: 120,
+    width: 110,
+  },
+  velocity: {
+    color: theme.palette.common.white,
+    marginRight: theme.spacing(1),
+    width: 110,
   },
 }));
