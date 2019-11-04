@@ -17,7 +17,7 @@ export default () => {
         target='_blank'
         variant='contained'
       >
-        Built by <span className={classes['link']}>@{username}</span>
+        Built by @{username}
       </Button>
     </div>
   )

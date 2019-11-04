@@ -90,11 +90,12 @@ export default () => {
     if (isPlaying) {
       return;
     }
+    const newFrame = frame + 1;
     const newFrames = copyArray(frames);
-    newFrames.push(copyArray(initState));
+    newFrames.splice(newFrame, 0, copyArray(initState));
     setFrames(newFrames);
     nextFrame(newFrames.length);
-  }, [frames, isPlaying, nextFrame]);
+  }, [frame, frames, isPlaying, nextFrame]);
 
   const setCurrentFrame = useCallback((newMatrix) => {
     const newFrames = copyArray(frames);
