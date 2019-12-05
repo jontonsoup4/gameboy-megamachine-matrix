@@ -39,6 +39,13 @@ export const NOTE_LENGTHS = {
   },
 };
 
+export const DIRECTIONS = {
+  LEFT: 'left',
+  RIGHT: 'right',
+  UP: 'up',
+  DOWN: 'down',
+};
+
 export const KEY_SHORTCUTS = {
   ADD_FRAME: 'Enter',
   COPY_FRAME: 'c',
@@ -50,7 +57,7 @@ export const KEY_SHORTCUTS = {
   GO_TO_NEXT_FRAME: 'd',
   GO_TO_PREVIOUS_FRAME: 'a',
   HELP_MENU: '?',
-  START_STOP: 'Space',
+  START_STOP: ' ',
   TRANSLATE_DOWN: 'ArrowDown',
   TRANSLATE_LEFT: 'ArrowLeft',
   TRANSLATE_RIGHT: 'ArrowRight',

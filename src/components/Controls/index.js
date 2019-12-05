@@ -13,7 +13,7 @@ import FastRewind from '@material-ui/icons/FastRewind';
 import FileCopy from '@material-ui/icons/FileCopy'
 import Grid from '@material-ui/core/Grid';
 import Help from '@material-ui/icons/Help';
-import HelpModal from '../HelpModal';
+import HelpModal from 'components/HelpModal';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -25,7 +25,7 @@ import React, { useEffect, useState } from 'react';
 import Select from '@material-ui/core/Select';
 import styles from './styles';
 import Tooltip from '@material-ui/core/Tooltip';
-import * as constants from '../../utils/constants';
+import * as constants from 'utils/constants';
 
 export default (props) => {
   const {

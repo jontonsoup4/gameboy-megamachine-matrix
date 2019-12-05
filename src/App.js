@@ -1,42 +1,34 @@
-import Controls from './components/Controls';
-import Gameboy from './components/Gameboy'
-import generateMIDI from './utils/generateMIDI';
+import * as constants from 'utils/constants'
+import Controls from 'components/Controls';
+import download from 'utils/download';
+import Gameboy from 'components/Gameboy'
+import generateMIDI from 'utils/generateMIDI';
 import Grid from '@material-ui/core/Grid';
-import Interval from './utils/interval';
+import Interval from 'utils/interval';
 import React, { useCallback, useEffect, useState } from 'react';
-import Ribbon from './components/Ribbon';
+import Ribbon from 'components/Ribbon';
 import styles from './styles';
-import * as constants from './utils/constants'
-
-const copyArray = (arr) => JSON.parse(JSON.stringify(arr));
-let cc = constants.STARTING_NOTE;
-const initState = copyArray(constants.EMPTY_MATRIX.map((row) => row.map(() => {
-  const item = {
-    cc,
-    velocity: constants.MIN_VELOCITY,
-  };
-  cc += 1;
-  return item;
-})).reverse());
+import { calculateBpm } from 'utils/bpm';
+import { copyArray, shift } from 'utils/transformations';
+import { getInitialState } from 'utils/state';
 
 let interval = null;
 
 export default () => {
   const classes = styles();
-  const [frames, setFrames] = useState([copyArray(initState)]);
-  const [frame, setFrame] = useState(0);
+
   const [activeItem, setActiveItem] = useState(null);
-  const [mouseActive, setMouseActive] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(constants.DEFAULT_BPM);
+  const [frame, setFrame] = useState(0);
+  const [frames, setFrames] = useState([copyArray(getInitialState())]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [mouseActive, setMouseActive] = useState(false);
   const [subdivision, setSubdivision] = useState(constants.NOTE_LENGTHS.EIGHTH.value);
   const [velocity, setVelocity] = useState(constants.DEFAULT_VELOCITY);
 
   const nextFrame = useCallback((framesLength = null) => {
     setFrame((frame) => frame >= (framesLength || frames.length) - 1 ? 0 : frame + 1);
   }, [frames, setFrame]);
-
-  const calculateBpm = (b, s) => b * (s / 4);
 
   const startAnimation = useCallback(() => {
     if (frames.length <= 1) {
@@ -92,7 +84,7 @@ export default () => {
     }
     const newFrame = frame + 1;
     const newFrames = copyArray(frames);
-    newFrames.splice(newFrame, 0, copyArray(initState));
+    newFrames.splice(newFrame, 0, copyArray(getInitialState()));
     setFrames(newFrames);
     nextFrame(newFrames.length);
   }, [frame, frames, isPlaying, nextFrame]);
@@ -106,8 +98,7 @@ export default () => {
   const setCurrentElement  = ([row, column]) => {
     const newMatrix = copyArray(matrix);
     const currentItem = newMatrix[row][column];
-    const currentItemOn = currentItem.velocity === constants.NOTE_OFF;
-    newMatrix[row][column].velocity = currentItemOn ? velocity : constants.NOTE_OFF;
+    newMatrix[row][column].velocity = currentItem.velocity !== velocity ? velocity : constants.NOTE_OFF;
     setCurrentFrame(newMatrix)
   };
 
@@ -119,7 +110,7 @@ export default () => {
     if (isPlaying) {
       return;
     }
-    setCurrentFrame(copyArray(initState));
+    setCurrentFrame(copyArray(getInitialState()));
   }, [isPlaying, setCurrentFrame]);
 
   const copyFrame = useCallback(() => {
@@ -147,23 +138,18 @@ export default () => {
     previousFrame(newFrames.length);
   }, [clearFrame, frame, frames, isPlaying, previousFrame]);
 
-  const download = useCallback(() => {
-    pauseAnimation();
+  const downloadMIDI = useCallback(() => {
+    if (isPlaying) {
+      pauseAnimation();
+    }
     const midi = generateMIDI({
       bpm,
       channel: constants.MIDI_CHANNEL,
       duration: subdivision,
       frames
     });
-    const blob = new Blob([midi], {type: 'audio/midi'});
-    const a = document.createElement('a');
-    a.download = `MIDI_${new Date().getTime()}.mid`;
-    a.href = window.URL.createObjectURL(blob);
-    a.dataset.downloadurl = ['audio/midi', a.download, a.href].join(':');
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }, [bpm, frames, pauseAnimation, subdivision]);
+    download(midi);
+  }, [bpm, frames, isPlaying, pauseAnimation, subdivision]);
 
   const handleOnMouseDown = () => {
     if (activeItem) {
@@ -191,88 +177,43 @@ export default () => {
     setFrame(frames.length - 1);
   }, [frames, setFrame]);
 
-  const mapCCtoNewMatrix = (newMatrix, oldMatrix) => {
-    return newMatrix.map((r, ri) => r.map((m, ci) => ({
-      cc: oldMatrix[ri][ci].cc,
-      velocity: m.velocity,
-    })))
-  };
-
   const translateMatrix = useCallback((direction) => {
-    if (direction === 'up') {
-      const newMatrix = copyArray(frames[frame]);
-      newMatrix.push(newMatrix.shift());
-      setCurrentFrame(mapCCtoNewMatrix(newMatrix, frames[frame]));
-    } else if (direction === 'down') {
-      const newMatrix = copyArray(frames[frame]);
-      newMatrix.unshift(newMatrix.pop());
-      setCurrentFrame(mapCCtoNewMatrix(newMatrix, frames[frame]));
-    } else if (direction === 'left') {
-      let newMatrix = copyArray(matrix);
-      newMatrix = newMatrix.map((row) => {
-        const newRow = copyArray(row);
-        newRow.push(newRow.shift());
-        return newRow;
-      });
-      setCurrentFrame(mapCCtoNewMatrix(newMatrix, matrix));
-    } else if (direction === 'right') {
-      let newMatrix = copyArray(matrix);
-      newMatrix = newMatrix.map((row) => {
-        const newRow = copyArray(row);
-        newRow.unshift(newRow.pop());
-        return newRow;
-      });
-      setCurrentFrame(mapCCtoNewMatrix(newMatrix, matrix));
-    }
-  }, [frame, frames, matrix, setCurrentFrame]);
+    setCurrentFrame(shift[direction](matrix));
+  }, [matrix, setCurrentFrame]);
 
   const handleSetVelocity = (value) => {
     setVelocity(Math.min(Math.max(parseInt(value), constants.MIN_VELOCITY), constants.MAX_VELOCITY));
   };
 
   const handleKeyDown = useCallback((event) => {
-    const { code, key } = event;
-    if (key === constants.KEY_SHORTCUTS.TRANSLATE_UP) {
-      translateMatrix('up');
-    } else if (key === constants.KEY_SHORTCUTS.TRANSLATE_DOWN) {
-      translateMatrix('down');
-    } else if (key === constants.KEY_SHORTCUTS.TRANSLATE_LEFT) {
-      translateMatrix('left');
-    } else if (key === constants.KEY_SHORTCUTS.TRANSLATE_RIGHT) {
-      translateMatrix('right');
-    } else if (key === constants.KEY_SHORTCUTS.ADD_FRAME) {
-      addFrame();
-    } else if (key === constants.KEY_SHORTCUTS.COPY_FRAME) {
-      copyFrame();
-    } else if (key === constants.KEY_SHORTCUTS.CLEAR_FRAME) {
-      clearFrame();
-    } else if (key === constants.KEY_SHORTCUTS.DELETE_FRAME) {
-      deleteFrame();
-    } else if (key === constants.KEY_SHORTCUTS.GO_TO_FIRST_FRAME) {
-      goToFirstFrame();
-    } else if (key === constants.KEY_SHORTCUTS.GO_TO_LAST_FRAME) {
-      goToLastFrame();
-    } else if (key === constants.KEY_SHORTCUTS.GO_TO_NEXT_FRAME) {
-      nextFrame();
-    } else if (key === constants.KEY_SHORTCUTS.GO_TO_PREVIOUS_FRAME) {
-      previousFrame();
-    } else if (key === constants.KEY_SHORTCUTS.DOWNLOAD) {
-      download();
-    } else if (key === constants.KEY_SHORTCUTS.HELP_MENU) {
-      window.showHelp && window.showHelp();
-    } else if (code === constants.KEY_SHORTCUTS.START_STOP) {
-      if (isPlaying) {
-        pauseAnimation();
-      } else {
-        startAnimation();
-      }
+    const { key } = event;
+    const actions = {
+      [constants.KEY_SHORTCUTS.TRANSLATE_UP]: () => translateMatrix(constants.DIRECTIONS.UP),
+      [constants.KEY_SHORTCUTS.TRANSLATE_DOWN]: () => translateMatrix(constants.DIRECTIONS.DOWN),
+      [constants.KEY_SHORTCUTS.TRANSLATE_LEFT]: () => translateMatrix(constants.DIRECTIONS.LEFT),
+      [constants.KEY_SHORTCUTS.TRANSLATE_RIGHT]: () => translateMatrix(constants.DIRECTIONS.RIGHT),
+      [constants.KEY_SHORTCUTS.ADD_FRAME]: addFrame,
+      [constants.KEY_SHORTCUTS.COPY_FRAME]: copyFrame,
+      [constants.KEY_SHORTCUTS.CLEAR_FRAME]: clearFrame,
+      [constants.KEY_SHORTCUTS.DELETE_FRAME]: deleteFrame,
+      [constants.KEY_SHORTCUTS.GO_TO_FIRST_FRAME]: goToFirstFrame,
+      [constants.KEY_SHORTCUTS.GO_TO_LAST_FRAME]: goToLastFrame,
+      [constants.KEY_SHORTCUTS.GO_TO_NEXT_FRAME]: nextFrame,
+      [constants.KEY_SHORTCUTS.GO_TO_PREVIOUS_FRAME]: previousFrame,
+      [constants.KEY_SHORTCUTS.DOWNLOAD]: downloadMIDI,
+      [constants.KEY_SHORTCUTS.HELP_MENU]: window.showHelp,
+      [constants.KEY_SHORTCUTS.START_STOP]: () => isPlaying ? pauseAnimation() : startAnimation(),
+    };
+    const action = actions[key];
+    if (action) {
+      action();
     }
   }, [
     addFrame,
     clearFrame,
     copyFrame,
     deleteFrame,
-    download,
+    downloadMIDI,
     goToFirstFrame,
     goToLastFrame,
     isPlaying,
@@ -325,7 +266,7 @@ export default () => {
         handleClear={clearFrame}
         handleCopyFrame={copyFrame}
         handleDeleteFrame={deleteFrame}
-        handleDownload={download}
+        handleDownload={downloadMIDI}
         handleGoToFirstFrame={goToFirstFrame}
         handleGoToLastFrame={goToLastFrame}
         handleNextFrame={nextFrame}

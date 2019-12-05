@@ -8,7 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import * as constants from '../../utils/constants';
+import * as constants from 'utils/constants';
 
 export default (props) => {
   const { onClose, open } = props;
@@ -42,7 +42,7 @@ export default (props) => {
                     {action}
                   </TableCell>
                   <TableCell align="right">
-                    {constants.KEY_SHORTCUTS[action]}
+                    {constants.KEY_SHORTCUTS[action].replace(' ', 'Space')}
                   </TableCell>
                 </TableRow>
               ))}
